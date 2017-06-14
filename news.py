@@ -1,9 +1,8 @@
-#!usr/bin/python3
+#!/usr/bin/env python3
 
 import psycopg2
 
 DBNAME = "news"
-message = "hello"
 
 
 def get_articles():
