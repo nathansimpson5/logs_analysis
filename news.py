@@ -9,10 +9,12 @@ def get_articles():
     """Return 3 most popular articles"""
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("SELECT articles.title, count(*) AS views "
-              "FROM log INNER JOIN articles ON log.path "
-              "ILIKE '%' || articles.slug GROUP BY title "
-              "ORDER BY views DESC LIMIT 3;")
+    c.execute("SELECT articles.title, log.views "
+    	      "FROM (SELECT path, count(*) as count FROM log "
+    	      "WHERE status = '200 OK' GROUP BY path) AS log "
+    	      "INNER JOIN articles "
+    	      "ON log.path ILIKE '%' || articles.slug "
+    	      "ORDER BY views DESC LIMIT 3;")
     articles = c.fetchall()
     for i in articles:
         print (i[0] + ' | ' + str(i[1]))
