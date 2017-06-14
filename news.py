@@ -31,7 +31,7 @@ def get_authors():
               "FROM articles INNER JOIN authors "
               "ON authors.id = articles.author INNER JOIN "
               "log ON log.path ILIKE '%' || articles.slug "
-              "GROUP BY authors.name ORDER BY views DESC LIMIT 3;")
+              "GROUP BY authors.name ORDER BY views DESC;")
     authors = c.fetchall()
     db.close()
 
@@ -59,7 +59,7 @@ print ("------------------------------------------------")
 print ("The three most popular articles are:")
 get_articles()
 print ("------------------------------------------------")
-print ("The three most popular authors are:")
+print ("The most popular authors are:")
 get_authors()
 print ("------------------------------------------------")
 print ("These days had more than 1% of page requests as errors:")
