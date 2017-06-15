@@ -10,7 +10,7 @@ def get_articles():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute("SELECT articles.title, log.views "
-    	      "FROM (SELECT path, count(*) as count FROM log "
+    	      "FROM (SELECT path, count(*) as views FROM log "
     	      "WHERE status = '200 OK' GROUP BY path) AS log "
     	      "INNER JOIN articles "
     	      "ON log.path ILIKE '%' || articles.slug "
@@ -43,15 +43,22 @@ def get_errors():
     """On which days did more than 1% of requests lead to errors"""
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("SELECT errors_view.date, count, total_requests from errors_view"
-              " INNER JOIN totals_view ON errors_view.date = totals_view.date "
-              "WHERE ((errors_view.count*100)/totals_view.total_requests)>1;")
+    c.execute("SELECT to_char(date, 'FMMonth FMDD, YYYY'), err/total as ratio"
+              " from (select time::date as date, "
+              "count(*) as total, "
+              "sum((status != '200 OK')::int)::float as err "
+              "from log "
+              "group by date) as errors "
+              "where err/total > .01;")
+    # c.execute("SELECT errors_view.date, count, total_requests from errors_view"
+    #           " INNER JOIN totals_view ON errors_view.date = totals_view.date "
+    #           "WHERE ((errors_view.count*100)/totals_view.total_requests)>1;")
     errors = c.fetchall()
     db.close()
 
     for i in errors:
         print (i[0])
-        print (str(round((i[1]*100)/i[2], 2)) + '% errors')
+        print (str(round((i[1]*100), 2)) + '% errors')
         print ("---------------")
 
 
