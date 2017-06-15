@@ -10,11 +10,11 @@ def get_articles():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute("SELECT articles.title, log.views "
-    	      "FROM (SELECT path, count(*) as views FROM log "
-    	      "WHERE status = '200 OK' GROUP BY path) AS log "
-    	      "INNER JOIN articles "
-    	      "ON log.path ILIKE '%' || articles.slug "
-    	      "ORDER BY views DESC LIMIT 3;")
+              "FROM (SELECT path, count(*) as views FROM log "
+              "WHERE status = '200 OK' GROUP BY path) AS log "
+              "INNER JOIN articles "
+              "ON log.path ILIKE '%' || articles.slug "
+              "ORDER BY views DESC LIMIT 3;")
     articles = c.fetchall()
     for i in articles:
         print (i[0] + ' | ' + str(i[1]))
