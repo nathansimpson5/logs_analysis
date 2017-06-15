@@ -50,9 +50,6 @@ def get_errors():
               "from log "
               "group by date) as errors "
               "where err/total > .01;")
-    # c.execute("SELECT errors_view.date, count, total_requests from errors_view"
-    #           " INNER JOIN totals_view ON errors_view.date = totals_view.date "
-    #           "WHERE ((errors_view.count*100)/totals_view.total_requests)>1;")
     errors = c.fetchall()
     db.close()
 
